@@ -1,0 +1,22 @@
+.home {
+    background-image: url('../../assets/background1.jpg');
+    height:calc(100vh - 4rem);
+    background-size: cover;
+}
+
+.home-title {
+    position: absolute;
+    right: 10%;
+    top: 20%;
+    font-family: 'Special Elite', cursive;
+}
+
+span {
+    color: red;
+    position: absolute;
+    right: 5%;
+    top: 150%;
+    font-family: 'Special Elite', cursive;
+}
+
+
