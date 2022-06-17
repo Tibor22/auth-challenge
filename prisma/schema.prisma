@@ -27,6 +27,7 @@ model Movie {
   runtimeMins   Int
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+  imgUrl        String?
   users MoviesAndUsers[]
 }
 

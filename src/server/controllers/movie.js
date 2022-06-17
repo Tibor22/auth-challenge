@@ -19,7 +19,7 @@ const getAllMovies = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-	const { title, description, runtimeMins, userId } = req.body;
+	const { title, description, runtimeMins, userId ,imgUrl} = req.body;
 	const [bearer, userToken] = req.headers.authorization.split(" ");
 
 	// try {
@@ -39,6 +39,7 @@ const createMovie = async (req, res) => {
 				title,
 				description,
 				runtimeMins,
+				imgUrl: imgUrl? imgUrl:null,
 				users: {
 					create: [
 						{

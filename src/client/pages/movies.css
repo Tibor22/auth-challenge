@@ -14,7 +14,21 @@ overflow-y: auto;
 }
 
 .grid-container li {
-    border: 2px solid rgba(255, 255, 255, 0.531);
+   
     padding: 2rem;
-    height: 10rem;
+    height: auto;
+}
+.grid-container li img{
+    height:8rem;
+    width:10rem;
+}
+
+.img-container {
+    height:10rem;
+    width:100%;
+   /* background-size: cover; */
+}
+
+.movie-card {
+    border: 2px solid rgba(255, 255, 255, 0.531);
 }

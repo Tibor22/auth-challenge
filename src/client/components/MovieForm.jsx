@@ -1,12 +1,15 @@
 import { useState } from "react";
+import Axios from 'axios'
 './UserForm.css'
 
 export default function MovieForm({ handleSubmit ,isLoading}) {
     const [movie, setMovie] = useState({ title: '', description: '', runtimeMins: 60 });
+    const [imageSelected, setImageSelected] = useState();
+    const [uploadedImgUrl, setUploadedImgUrl] = useState(null);
 
     const handleSubmitDecorator = (e) => {
         e.preventDefault();
-        handleSubmit(movie);
+        handleSubmit({...movie,imgUrl:uploadedImgUrl,});
     }
 
     const handleChange = (e) => {
@@ -14,9 +17,21 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
 
         setMovie({
             ...movie,
-            [name]: name === 'runtimeMins' ? parseInt(value) : value
+            [name]: name === 'runtimeMins' ? parseInt(value) : value,
         });
     }
+
+    const uploadImage =async (files) => {
+        console.log(files[0])
+        const formData = new FormData();
+        formData.append("file",imageSelected)
+        formData.append("upload_preset","eqmuqogf")
+       const res = await Axios.post("https://api.cloudinary.com/v1_1/dxz7uaunn/image/upload",formData);
+       console.log(res)
+       setUploadedImgUrl(res.data.secure_url)
+    }
+
+   
 
     return (
         <div className="form-container">
@@ -25,9 +40,14 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
             <input type='text' name='title' placeholder="Title" value={movie.title} onChange={handleChange} />
             <input type='text' name='description' placeholder="Description" value={movie.description} onChange={handleChange} />
             <input type='number' name='runtimeMins' placeholder="Runtime (minutes)" value={movie.runtimeMins} onChange={handleChange} />
+            <input type="file" onChange={(e) =>{setImageSelected(e.target.files[0])}}/>
+            <div className="image-upload" onClick={uploadImage}>Upload Image</div>
             <button type="submit">Submit</button>
         </form>}
         {isLoading && <div className="loader"></div>}
         </div>
     );
 }
+
+
+// cloudinary: eqmuqogf

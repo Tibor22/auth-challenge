@@ -29,6 +29,17 @@
     font-weight: bold;
     border: none;
 }
+.image-upload {
+    margin-top: 1rem;
+    padding:.7rem;
+    background-color: var(--main-bg-color);
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    font-size:.8rem
+}
 
 .form-login-register button:hover {
     background-color: var(--main-bg-color-hover);

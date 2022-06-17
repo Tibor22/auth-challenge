@@ -110,14 +110,15 @@ setIsLoading(true)
  
   };
   
-  const handleCreateMovie = async ({ title, description, runtimeMins }) => {
+  const handleCreateMovie = async ({ title, description, runtimeMins,imgUrl }) => {
     setIsLoading(true)
     const token = localStorage.getItem('WEB_TOKEN')
     const userId = localStorage.getItem('UserId')
+    console.log(title, description, runtimeMins,imgUrl )
     const opts =  {
       method: 'POST',
       headers:{'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
-      body: JSON.stringify({title, description, runtimeMins,userId})
+      body: JSON.stringify({title, description, runtimeMins,userId,imgUrl})
     }
 
     const res = await fetch('http://localhost:4000/movie',opts)
