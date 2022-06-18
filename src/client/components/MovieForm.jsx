@@ -2,7 +2,7 @@ import { useState } from "react";
 import Axios from 'axios'
 './UserForm.css'
 
-export default function MovieForm({ handleSubmit ,isLoading}) {
+export default function MovieForm({ handleSubmit ,isLoading,setIsLoading,errorMsg,setErrorMsg}) {
     const [movie, setMovie] = useState({ title: '', description: '', runtimeMins: 60 });
     const [imageSelected, setImageSelected] = useState();
     const [uploadedImgUrl, setUploadedImgUrl] = useState(null);
@@ -15,6 +15,8 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
+       
+
         setMovie({
             ...movie,
             [name]: name === 'runtimeMins' ? parseInt(value) : value,
@@ -22,6 +24,12 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
     }
 
     const uploadImage =async (files) => {
+        if (+imageSelected.size > 1097152) {
+       setErrorMsg('Image is too large, maximum size is 1MB')
+       return
+        } 
+        setErrorMsg(null)
+        setIsLoading(true)
         console.log(files[0])
         const formData = new FormData();
         formData.append("file",imageSelected)
@@ -29,6 +37,7 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
        const res = await Axios.post("https://api.cloudinary.com/v1_1/dxz7uaunn/image/upload",formData);
        console.log(res)
        setUploadedImgUrl(res.data.secure_url)
+       setIsLoading(false)
     }
 
    
@@ -43,6 +52,7 @@ export default function MovieForm({ handleSubmit ,isLoading}) {
             <input type="file" onChange={(e) =>{setImageSelected(e.target.files[0])}}/>
             <div className="image-upload" onClick={uploadImage}>Upload Image</div>
             <button type="submit">Submit</button>
+            {errorMsg && <div className="error">{errorMsg}</div>}
         </form>}
         {isLoading && <div className="loader"></div>}
         </div>

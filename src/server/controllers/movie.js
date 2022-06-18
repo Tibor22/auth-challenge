@@ -4,6 +4,30 @@ const prisma = new PrismaClient();
 
 const jwtSecret = process.env.JWT_SECRET_KEY;
 
+
+const deleteMovie = async(req,res) => {
+	const [bearer,userToken] = req.headers.authorization.split(" ");
+	console.log("USER TOKEN:",userToken);
+	const verify = jwt.verify(userToken, jwtSecret);
+	const id  = +req.params.id;
+	console.log("ID:",id);
+	console.log("VERIFY:",verify);
+	if(!verify.LoggedIn) return res.status(401).json({msg:'Invalid token'});
+
+	const moviesAndUsers = await prisma.moviesAndUsers.deleteMany({
+		where:{
+			movieId: id,
+		}
+	});
+
+	const deletedMovie = await prisma.movie.delete({
+		where : {id:id},
+	})
+
+	return res.status(200).json({data: deletedMovie});
+
+}
+
 const getAllMovies = async (req, res) => {
 	const [bearer, userToken] = req.headers.authorization.split(" ");
 	const verify = jwt.verify(userToken, jwtSecret);
@@ -34,37 +58,43 @@ const createMovie = async (req, res) => {
 	console.log('TOKEN:',userToken);
 	if (verify.LoggedIn) {
 		console.log("VERIFY");
-		const createdMovie = await prisma.movie.create({
-			data: {
-				title,
-				description,
-				runtimeMins,
-				imgUrl: imgUrl? imgUrl:null,
-				users: {
-					create: [
-						{
-							user: {
-								connect: {
-									id: userIdNum,
+
+		try {
+			const createdMovie = await prisma.movie.create({
+				data: {
+					title,
+					description,
+					runtimeMins,
+					imgUrl: imgUrl? imgUrl:null,
+					users: {
+						create: [
+							{
+								user: {
+									connect: {
+										id: userIdNum,
+									},
 								},
 							},
-						},
-					],
+						],
+					},
 				},
-			},
-			// include :{user:true}
-		});
-
-		console.log(createdMovie);
-		res.json({ data: createdMovie });
+			
+			});
+	
+			console.log(createdMovie);
+		return	res.json({ data: createdMovie });
+		} catch (err) {
+			console.log(err)
+			return res.status(400).json({ error: "Title already exist" });
+		}
+	
 	}
 
-	// } catch (e) {
-	//     return res.status(401).json({ error: 'Invalid token provided.' })
-	// }
+
 };
 
 module.exports = {
 	getAllMovies,
 	createMovie,
+	deleteMovie,
 };

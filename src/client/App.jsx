@@ -123,8 +123,11 @@ setIsLoading(true)
 
     const res = await fetch('http://localhost:4000/movie',opts)
     const data = await res.json()
-
-    // setMovies(prevMovies => [...prevMovies,data.data])
+if(data.error) {
+  setErrorMsg(data.error)
+  setIsLoading(false)
+  return
+}
     console.log('LOGIN:',data)
     
     const moviesRes = await fetch(`http://localhost:4000/movie?userId=${userId}`,
@@ -142,6 +145,30 @@ setIsLoading(true)
 
   }
 
+  const handleDeleteMovie = async(movieId) => {
+    const token = localStorage.getItem('WEB_TOKEN')
+    const moviesRes = await fetch(`http://localhost:4000/movie/${movieId}`,
+    {
+      method: 'DELETE',
+      headers:{'Content-Type': 'application/json','Authorization': `Bearer ${token}`}
+    }
+    );
+    setIsLoading(true)
+    const data = await moviesRes.json();
+    const id  = +data.data.id;
+
+    console.log('DATA:', data);
+    console.log("ID:", id);
+    setIsLoading(false)
+       setMovies(prevMovies => {
+            return prevMovies = prevMovies.filter((movie) => {
+              console.log(+movie.movieId,id)
+              if(+movie.movieId !== id) return true
+              else false
+            })
+       })
+  } 
+
   console.log(movies)
 
   return (
@@ -153,8 +180,8 @@ setIsLoading(true)
         <Route  path="/" element={<Home/>}/>
       <Route path="register" element={<UserForm handleSubmit={handleRegister} errorMsg={errorMsg} setErrorMsg={setErrorMsg} isLoading={isLoading}/>}/>
       <Route path="login" element={<UserForm handleSubmit={handleLogin} errorMsg={errorMsg} setErrorMsg={setErrorMsg} isLoading={isLoading}/>}/>
-    <Route path="create-movie" element={<MovieForm handleSubmit={handleCreateMovie} isLoading={isLoading}/>}/>
-     <Route path="movies" element={<Movies movies={movies}/>}/>
+    <Route path="create-movie" element={<MovieForm handleSubmit={handleCreateMovie} isLoading={isLoading} setIsLoading={setIsLoading} errorMsg={errorMsg} setErrorMsg={setErrorMsg} />}/>
+     <Route path="movies" element={<Movies movies={movies} handleDeleteMovie={handleDeleteMovie}/>}/>
       </Routes>
      
   
