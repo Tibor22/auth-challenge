@@ -11,6 +11,7 @@ import MovieForm from './components/MovieForm';
 import UserForm from './components/UserForm';
 import React, { useContext } from 'react';
 import {UserContext} from './components/UserContext';
+import {MovieContext} from './components/MovieContext';
 import Header from './components/header';
 import Home from './pages/home';
 import Movies from './pages/movies';
@@ -23,10 +24,12 @@ function App() {
   const {dispatch,state}=  useContext(UserContext)
   const [errorMsg,setErrorMsg] = useState(null);
   const [isLoading,setIsLoading] = useState(false);
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  let {movie} = useContext(MovieContext)
 
 // console.log('DISPATCH:',dispatch)
   console.log('VALUE:',state)
+  console.log('MOVIE:',movie.movie);
 
   useEffect(() => {
     const token = localStorage.getItem('WEB_TOKEN')
@@ -39,13 +42,18 @@ function App() {
       })
         .then(res => res.json())
         .then(res => {
-          setMovies(res.data)
+         
+          movie.movie ? setMovies(prevData => {
+            console.log("MOVIES:", prevData)
+            console.log("CONTEXT MOVIE:", movie)
+            return [...prevData,movie]
+          }) : setMovies(res.data)
         } );
         dispatch({type:"USER_LOGIN",payload: {token:token,userId:userId}})
         setIsLoading(false)
     }
   setErrorMsg(null)
-  }, []);
+  }, [movie]);
 
   const handleRegister = async ({ username, password }) => {
 
@@ -147,7 +155,7 @@ if(data.error) {
 
   const handleDeleteMovie = async(movieId) => {
     const token = localStorage.getItem('WEB_TOKEN')
-    const moviesRes = await fetch(`http://localhost:4000/movie/${movieId}`,
+    const moviesRes = await fetch(`http://localhost:4000/movie/${movieId}?userId=${userId}`,
     {
       method: 'DELETE',
       headers:{'Content-Type': 'application/json','Authorization': `Bearer ${token}`}
@@ -155,15 +163,15 @@ if(data.error) {
     );
     setIsLoading(true)
     const data = await moviesRes.json();
-    const id  = +data.data.id;
 
+    console.log("ID:", movieId)
     console.log('DATA:', data);
-    console.log("ID:", id);
     setIsLoading(false)
        setMovies(prevMovies => {
             return prevMovies = prevMovies.filter((movie) => {
-              console.log(+movie.movieId,id)
-              if(+movie.movieId !== id) return true
+              console.log("PREV MOVIE:", movie)
+              console.log(+movie.movie.id,movieId)
+              if(+movie.movie.id!== movieId) return true
               else false
             })
        })

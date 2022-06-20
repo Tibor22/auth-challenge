@@ -5,6 +5,9 @@ import React, { useContext } from 'react';
 import {UserContext} from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import  {useEffect } from 'react'
+import { FcFilmReel} from "react-icons/fc";
+import { AiOutlineLogin} from "react-icons/ai";
+import Search from './Search.js'
 
 export default function header() {
     const {dispatch,state}=  useContext(UserContext)
@@ -26,26 +29,28 @@ export default function header() {
 	return (
 		<div className="header">
 			<nav className="nav">
-				<ul>
+				<ul className="nav-ul">
 					{state.isLoggedIn &&<div className="movies">
 						<NavLink to="movies" style={({isActive}) => isActive ? activeStyle: undefined}>
 							{" "}
-							<li>Movies List</li>
+							<li className="nav-list">Movies List</li>
 						</NavLink>
 						<NavLink to="create-movie" style={({isActive}) => isActive ? activeStyle: undefined}>
 							{" "}
-							<li>Create a movie</li>
+							<li  className="nav-list">Create a movie  <FcFilmReel/></li>
 						</NavLink>
+						<Search/>
+						
 					</div> }
 
 					{!state.isLoggedIn && <NavLink className="register" to="register" style={({isActive}) => isActive ? activeStyle: undefined}>
-						<li>Register</li>
+						<li  className="nav-list">Register</li>
 					</NavLink>}
 					<NavLink to="login" style={({isActive}) => isActive ? activeStyle: undefined}>
 						{" "}
-						{!token &&<li>Login</li>}
+						{!token &&<li  className="nav-list">Login</li>}
 					</NavLink>
-                    {token && <NavLink to="/"><li onClick={logout}>Logout</li></NavLink> } 
+                    {token && <NavLink to="/"><li  className="nav-list" onClick={logout}>Logout <AiOutlineLogin className="logout"/></li></NavLink> } 
 				</ul>
 			</nav>
 		</div>
